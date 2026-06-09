@@ -5,21 +5,18 @@ def solve(grid, R, C, sr, sc, er, ec, M):
     
     # position of each treasure
     treasures = []
-    for r in range(R):
-        for c in range(C):
-            if grid[r][c] == 'T':
-                treasures.append((r, c))
-    
-    num_treasures = len(treasures)
+    for row in range(R):
+        for col in range(C):
+            if grid[row][col] == 'T':
+                treasures.append((row, col))
     
     # assign index to each treasure
     treasure_index = {}
     for idx, (tr, tc) in enumerate(treasures):
         treasure_index[(tr, tc)] = idx
     
-    # check whether start or end position has a treasure
+    # check whether start position has a treasure
     start_has_treasure = (sr, sc) in treasure_index
-    end_has_treasure = (er, ec) in treasure_index
     
     # check if start == end
     if sr == er and sc == ec:
@@ -35,17 +32,16 @@ def solve(grid, R, C, sr, sc, er, ec, M):
         return -1
 
 
-    # BFS with state: (row, col, moves_used, treasure_mask)
-    # dp[row][col][mask] = minimum moves to reach this state
-    dp = {}
     
     # initial state
     initial_mask = (1 << treasure_index[(sr, sc)]) if start_has_treasure else 0
     initial_state = (sr, sc, 0, initial_mask)
     
+    # BFS with state: (row, col, moves_used, treasure_mask)
     queue = deque()
-    queue.append((sr, sc, 0, initial_mask))
-    dp[(sr, sc, initial_mask)] = 0
+    queue.append(initial_state)
+
+    visited = set()
     
     # directions: up, down, left, right
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
@@ -53,38 +49,38 @@ def solve(grid, R, C, sr, sc, er, ec, M):
     max_treasures = -1
     
     while queue:
-        r, c, moves, mask = queue.popleft()
-        
+        row, col, moves_used, treasure_mask = queue.popleft()
+
         # check whether it's the end position
-        if r == er and c == ec:
+        if row == er and col == ec:
             # count treasures from the mask (indices in the binary mask correspond to the relative index of the treasure)
             # for example mask 101 means treasures of index 0 and index 2 are gathered 
-            treasures_collected = bin(mask).count('1')
+            treasures_collected = bin(treasure_mask).count('1')
             max_treasures = max(max_treasures, treasures_collected)
         
-        if moves == M:
+        if moves_used == M:
             continue
         
         for dr, dc in directions:
-            new_row, new_column = r + dr, c + dc
+            new_row, new_column = row + dr, col + dc
             
             # check bounds
             if 0 <= new_row < R and 0 <= new_column < C:
                 # check wall
                 if grid[new_row][new_column] != '#':
                     # calculate new mask
-                    new_mask = mask
+                    new_mask = treasure_mask
                     if (new_row, new_column) in treasure_index:
                         t_idx = treasure_index[(new_row, new_column)]
-                        new_mask = mask | (1 << t_idx)
+                        new_mask = treasure_mask | (1 << t_idx)
                     
-                    new_moves = moves + 1
+                    new_moves = moves_used + 1
                     
                     # check if this state is better than what we've seen
-                    state_key = (new_row, new_column, new_mask)
-                    if state_key not in dp or dp[state_key] > new_moves:
-                        dp[state_key] = new_moves
-                        queue.append((new_row, new_column, new_moves, new_mask))
+                    new_state = (new_row, new_column, new_moves, new_mask)
+                    if new_state not in visited:
+                        visited.add(new_state)
+                        queue.append(new_state)
     
     return max_treasures
 
