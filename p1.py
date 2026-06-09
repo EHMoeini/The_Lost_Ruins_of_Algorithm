@@ -47,9 +47,11 @@ def solve(grid, R, C, sr, sc, er, ec, M):
     
     # check if start == end
     if sr == er and sc == ec:
-        if M >= 0:
+        if M == 0:
+            # Can't move, only1 collect treasure at S if it exists
             return 1 if start_has_treasure else 0
-        else:
+        elif M < 0:
+            # Invalid move budget
             return -1
     
     # BFS with state: (row, col, moves_used, treasure_mask)
