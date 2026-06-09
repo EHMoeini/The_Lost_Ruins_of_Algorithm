@@ -30,7 +30,7 @@ def solve(grid, R, C, sr, sc, er, ec, M):
             # invalid number of possible moves
             return -1
         
-    # if start position is invalid or the exit is blocked
+    # if start or end position is blocked
     if grid[sr][sc] == '#' or grid[er][ec] == '#':
         return -1
 
@@ -55,7 +55,7 @@ def solve(grid, R, C, sr, sc, er, ec, M):
     while queue:
         r, c, moves, mask = queue.popleft()
         
-        # check whether it's the exit position
+        # check whether it's the end position
         if r == er and c == ec:
             # count treasures from the mask (indices in the binary mask correspond to the relative index of the treasure)
             # for example mask 101 means treasures of index 0 and index 2 are gathered 
