@@ -16,10 +16,6 @@ def solve(grid, R, C, sr, sc, er, ec, K):
     if K > num_treasures:
         return -1
     
-    # if K = 0, just find shortest path from S to E
-    if K == 0:
-        return bfs_shortest_path(grid, R, C, sr, sc, er, ec)
-    
     treasure_index = {}
     for idx, (tr, tc) in enumerate(treasure_positions):
         treasure_index[(tr, tc)] = idx
@@ -66,34 +62,6 @@ def solve(grid, R, C, sr, sc, er, ec, K):
                     if new_state not in moves:
                         moves[new_state] = current_moves + 1
                         queue.append(new_state)
-    
-    return -1
-
-
-def bfs_shortest_path(grid, R, C, sr, sc, er, ec):
-    if sr == er and sc == ec:
-        return 0
-    
-    visited = [[False] * C for _ in range(R)]
-    visited[sr][sc] = True
-    
-    queue = deque([(sr, sc, 0)])
-    
-    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-    
-    while queue:
-        row, col, moves = queue.popleft()
-        
-        for dr, dc in directions:
-            neighbor_row, neighbor_col = row + dr, col + dc
-            
-            if 0 <= neighbor_row < R and 0 <= neighbor_col < C:
-                if grid[neighbor_row][neighbor_col] != '#' and not visited[neighbor_row][neighbor_col]:
-                    if neighbor_row == er and neighbor_col == ec:
-                        return moves + 1
-                    
-                    visited[neighbor_row][neighbor_col] = True
-                    queue.append((neighbor_row, neighbor_col, moves + 1))
     
     return -1
 
