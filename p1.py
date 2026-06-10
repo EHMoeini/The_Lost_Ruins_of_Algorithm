@@ -62,22 +62,22 @@ def solve(grid, R, C, sr, sc, er, ec, M):
             continue
         
         for dr, dc in directions:
-            new_row, new_column = row + dr, col + dc
+            neighbor_row, neighbor_col = row + dr, col + dc
             
             # check bounds
-            if 0 <= new_row < R and 0 <= new_column < C:
+            if 0 <= neighbor_row < R and 0 <= neighbor_col < C:
                 # check wall
-                if grid[new_row][new_column] != '#':
+                if grid[neighbor_row][neighbor_col] != '#':
                     # calculate new mask
                     new_mask = treasure_mask
-                    if (new_row, new_column) in treasure_index:
-                        t_idx = treasure_index[(new_row, new_column)]
+                    if (neighbor_row, neighbor_col) in treasure_index:
+                        t_idx = treasure_index[(neighbor_row, neighbor_col)]
                         new_mask = treasure_mask | (1 << t_idx)
                     
                     new_moves = moves_used + 1
                     
                     # check if this state is better than what we've seen
-                    new_state = (new_row, new_column, new_moves, new_mask)
+                    new_state = (neighbor_row, neighbor_col, new_moves, new_mask)
                     if new_state not in visited:
                         visited.add(new_state)
                         queue.append(new_state)

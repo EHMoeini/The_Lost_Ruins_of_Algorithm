@@ -3,12 +3,12 @@ from collections import deque
 
 def solve(grid, R, C, sr, sc, er, ec, K):
     
-    # find all treasure positions and index them in reading order
+    # find all treasure positions and assign index
     treasure_positions = []
-    for r in range(R):
-        for c in range(C):
-            if grid[r][c] == 'T':
-                treasure_positions.append((r, c))
+    for row in range(R):
+        for col in range(C):
+            if grid[row][col] == 'T':
+                treasure_positions.append((row, col))
     
     num_treasures = len(treasure_positions)
     
@@ -40,29 +40,29 @@ def solve(grid, R, C, sr, sc, er, ec, K):
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
     
     while queue:
-        r, c, mask = queue.popleft()
+        row, col, mask = queue.popleft()
         
-        current_moves = moves[(r,c,mask)]
+        current_moves = moves[(row,col,mask)]
 
         # check if we've reached the end with enough treasures
         treasures_collected = bin(mask).count('1')
-        if r == er and c == ec and treasures_collected >= K:
+        if row == er and col == ec and treasures_collected >= K:
             return current_moves
         
         # visit neighbors
         for dr, dc in directions:
-            nr, nc = r + dr, c + dc
+            neighbor_row, neighbor_col = row + dr, col + dc
             
-            if 0 <= nr < R and 0 <= nc < C:
-                if grid[nr][nc] != '#':
+            if 0 <= neighbor_row < R and 0 <= neighbor_col < C:
+                if grid[neighbor_row][neighbor_col] != '#':
                     # calculate new mask
                     new_mask = mask
-                    if (nr, nc) in treasure_index:
-                        t_idx = treasure_index[(nr, nc)]
+                    if (neighbor_row, neighbor_col) in treasure_index:
+                        t_idx = treasure_index[(neighbor_row, neighbor_col)]
                         new_mask = mask | (1 << t_idx)
                     
                     # check if this state has been visited
-                    new_state = (nr, nc, new_mask)
+                    new_state = (neighbor_row, neighbor_col, new_mask)
                     if new_state not in moves:
                         moves[new_state] = current_moves + 1
                         queue.append(new_state)
@@ -82,18 +82,18 @@ def bfs_shortest_path(grid, R, C, sr, sc, er, ec):
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
     
     while queue:
-        r, c, moves = queue.popleft()
+        row, col, moves = queue.popleft()
         
         for dr, dc in directions:
-            nr, nc = r + dr, c + dc
+            neighbor_row, neighbor_col = row + dr, col + dc
             
-            if 0 <= nr < R and 0 <= nc < C:
-                if grid[nr][nc] != '#' and not visited[nr][nc]:
-                    if nr == er and nc == ec:
+            if 0 <= neighbor_row < R and 0 <= neighbor_col < C:
+                if grid[neighbor_row][neighbor_col] != '#' and not visited[neighbor_row][neighbor_col]:
+                    if neighbor_row == er and neighbor_col == ec:
                         return moves + 1
                     
-                    visited[nr][nc] = True
-                    queue.append((nr, nc, moves + 1))
+                    visited[neighbor_row][neighbor_col] = True
+                    queue.append((neighbor_row, neighbor_col, moves + 1))
     
     return -1
 
@@ -108,10 +108,8 @@ def main():
         row = input().split()
         grid.append(row)
     
-    # Parse start, end, and K
     sr, sc, er, ec, K = map(int, input().split())
     
-    # Solve and output
     result = solve(grid, R, C, sr, sc, er, ec, K)
     print(result)
 
