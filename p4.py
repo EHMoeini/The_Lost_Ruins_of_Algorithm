@@ -1,33 +1,7 @@
-"""
-Problem 4 - "The Rescue Mission"
-Solution using Maximum Flow on a node-split graph to find maximum vertex-disjoint paths
-
-Algorithm: Edmonds-Karp max-flow on node-split graph
-- Split each cell (r,c) into node_in(r,c) and node_out(r,c)
-- Edge from node_in to node_out with capacity 1 (∞ for S and E)
-- Grid edges: node_out(u) -> node_in(v) with capacity ∞
-- Max flow from node_out(S) to node_in(E) = max vertex-disjoint paths
-"""
-
-import sys
 from collections import deque
 
 
 def solve(grid, R, C, sr, sc, er, ec):
-    """
-    Returns the maximum number of vertex-disjoint paths from (sr, sc) to (er, ec).
-    
-    Args:
-        grid: 2D list of strings representing the grid
-        R: number of rows
-        C: number of columns
-        sr, sc: start row and column
-        er, ec: end row and column
-    
-    Returns:
-        Maximum number of vertex-disjoint paths, or 0 if no path exists
-    """
-    
     # Special case: S == E
     if sr == er and sc == ec:
         return 1
@@ -37,13 +11,11 @@ def solve(grid, R, C, sr, sc, er, ec):
         return 0
     
     # Node splitting: each cell (r, c) has two nodes
-    # node_in(r, c) = (r * C + c) * 2
-    # node_out(r, c) = (r * C + c) * 2 + 1
-    def node_in(r, c):
-        return (r * C + c) * 2
+    def node_in(row, col):
+        return (row * C + col) * 2
     
-    def node_out(r, c):
-        return (r * C + c) * 2 + 1
+    def node_out(row, col):
+        return (row * C + col) * 2 + 1
     
     # Total nodes: R * C * 2
     total_nodes = R * C * 2
@@ -61,32 +33,31 @@ def solve(grid, R, C, sr, sc, er, ec):
         graph[v].append([u, 0, len(graph[u]) - 1])
     
     # Add internal edges (node_in -> node_out) for each passable cell
-    for r in range(R):
-        for c in range(C):
-            if grid[r][c] != '#':
+    for row in range(R):
+        for col in range(C):
+            if grid[row][col] != '#':
                 # Capacity is ∞ for S and E, 1 for intermediate cells
-                if (r == sr and c == sc) or (r == er and c == ec):
+                if (row == sr and col == sc) or (row == er and col == ec):
                     cap = float('inf')
                 else:
                     cap = 1
-                add_edge(node_in(r, c), node_out(r, c), cap)
+                add_edge(node_in(row, col), node_out(row, col), cap)
     
     # Add grid edges (node_out(u) -> node_in(v)) for adjacent passable cells
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-    for r in range(R):
-        for c in range(C):
-            if grid[r][c] != '#':
-                u_out = node_out(r, c)
+    for row in range(R):
+        for col in range(C):
+            if grid[row][col] != '#':
+                u_out = node_out(row, col)
                 for dr, dc in directions:
-                    nr, nc = r + dr, c + dc
-                    if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] != '#':
-                        v_in = node_in(nr, nc)
+                    neighbor_row, neighbor_col = row + dr, col + dc
+                    if 0 <= neighbor_row < R and 0 <= neighbor_col < C and grid[neighbor_row][neighbor_col] != '#':
+                        v_in = node_in(neighbor_row, neighbor_col)
                         # Capacity ∞ for grid edges
                         add_edge(u_out, v_in, float('inf'))
     
-    # Edmonds-Karp algorithm (BFS-based max flow)
+    # Edmonds-Karp algorithm
     def bfs_find_path():
-        """Find augmenting path using BFS, return path and bottleneck capacity"""
         parent = [-1] * total_nodes
         edge_from = [-1] * total_nodes
         visited = [False] * total_nodes
@@ -145,23 +116,16 @@ def solve(grid, R, C, sr, sc, er, ec):
 
 
 def main():
-    # Read input from stdin
-    input_data = sys.stdin.read().split('\n')
-    line_idx = 0
+    # get number of rows and columns
+    R, C = map(int, input().split())
     
-    # Parse R and C
-    R, C = map(int, input_data[line_idx].split())
-    line_idx += 1
-    
-    # Parse grid
+    # get the grid
     grid = []
     for i in range(R):
-        row = input_data[line_idx].split()
+        row = input().split()
         grid.append(row)
-        line_idx += 1
     
-    # Parse start and end positions
-    sr, sc, er, ec = map(int, input_data[line_idx].split())
+    sr, sc, er, ec = map(int, input().split())
     
     # Solve and output
     result = solve(grid, R, C, sr, sc, er, ec)
