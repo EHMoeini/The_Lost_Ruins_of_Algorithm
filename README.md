@@ -33,8 +33,6 @@ The main goal of the project was not only to implement algorithms, but to **mode
 
 ---
 
-## Algorithmic Map
-
 <div align="center">
 
 ## Algorithmic Map
