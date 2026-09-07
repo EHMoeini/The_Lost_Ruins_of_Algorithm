@@ -37,23 +37,11 @@ The main goal of the project was not only to implement algorithms, but to **mode
 
 <div align="center">
 
-```text
-                         ALGORITHMIA
-                              │
-              ┌───────────────┴───────────────┐
-              │                               │
-        STATE-SPACE SEARCH              GRAPH / NETWORK
-              │                               │
-       ┌──────┴──────┐                 ┌──────┴──────┐
-       │             │                 │             │
-      P1            P3                P2            P4
-       │             │                 │             │
-      BFS           BFS          Repeated BFS    Maximum Flow
-       │             │                 │             │
-   Bitmask        Bitmask        Shortest Paths  Node Splitting
-       │             │                 │             │
-  Move Limit     K Treasures      Average Dist.   Edmonds–Karp
-```
+## Algorithmic Map
+
+<p align="center">
+  <img src="./algorithm-map.png" alt="Algorithmia algorithmic map" width="70%">
+</p>`
 
 </div>
 
