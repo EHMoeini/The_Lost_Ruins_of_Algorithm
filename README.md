@@ -38,7 +38,7 @@ The main goal of the project was not only to implement algorithms, but to **mode
 ## Algorithmic Map
 
 <p align="center">
-  <img src="./algorithm-map.png" alt="Algorithmia algorithmic map" width="70%">
+  <img src="./algorithm-map.png" alt="Algorithmia algorithmic map" width="75%">
 </p>`
 
 </div>
